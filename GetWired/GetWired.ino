@@ -548,8 +548,10 @@ void receive(const MyMessage &message)  {
     #if defined(DOUBLE_RELAY)
       if (message.sensor >= RELAY_ID_1 && message.sensor < NUMBER_OF_RELAYS)  {
         if (!OVERCURRENT_ERROR[0] && !THERMAL_ERROR) {
-          IOD[message.sensor].NewState = message.getBool();
+          auto newState = message.getBool();
+          IOD[message.sensor].NewState = newState;
           IOD[message.sensor].SetRelay();
+          send(msgIOD.setSensor(message.sensor).set(newState));
         }
       }
     #endif
